@@ -1,5 +1,5 @@
 =====
-Simple cached file converter service
+Simple cached file converter service (Django 1.8 app)
 =====
 
 Checks MD5 sum of the file that is to be converted on server and uploads & performs
