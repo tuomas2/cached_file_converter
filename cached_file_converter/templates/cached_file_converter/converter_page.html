@@ -5,9 +5,7 @@
   <p>
   <form method="POST" enctype="multipart/form-data" onsubmit="return false;" >
     {% csrf_token %}
-    <span class="btn btn-primary btn-file">
-    Press this button to upload a file for conversion <input id="file" type="file"/>
-    </span>
+    <input id="file" type="file"/>
   </form>
   <h3>Conversion status and download link when file is ready for download:</h3>
   <pre id="log"> - idle - </pre>
