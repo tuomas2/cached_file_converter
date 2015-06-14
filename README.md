@@ -28,7 +28,7 @@ and set up some settings:
     CONVERTER_FUNC = process_task
 
 
-2. Include the polls URLconf in your project urls.py like this::
+2. Include the polls URLconf in your project urls.py like this:
 
     url(r'^cached_file_converter/', include('cached_file_converter.urls')),
 
