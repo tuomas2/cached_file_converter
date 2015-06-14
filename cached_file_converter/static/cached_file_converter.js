@@ -5,10 +5,10 @@ var loader_pic = '<br><img height="42" width="42" src="' + LOADER_GIF + '">';
 function upload(file, token, md5) {
     if (file)
         log('Uploading and converting file. Please wait! It will finish eventually, <br>' +
-            'but may take some time (even something like 10-20 minutes). Download link will appear here when it is finished. ' + loader_pic);
+            'but may take some time. Download link will appear here when it is finished. ' + loader_pic);
     else
-        log('Converting file. Cached version of file you were about to upload was found on server, but it is not yet converted to sword. <br>' +
-            'Please wait! It will finish eventually, but may take some time (even something like 10-20 minutes). <br>' +
+        log('Converting file. Cached version of file you were about to upload was found on server, but it is not yet converted. <br>' +
+            'Please wait! It will finish eventually, but may take some time. <br>' +
             'Download link will appear here when it is finished. ' +
             loader_pic);
     var formdata = new FormData();
@@ -24,7 +24,7 @@ function upload(file, token, md5) {
         type: 'POST', url: 'upload', data: formdata, processData: false, contentType: false,
         success: function (data) {
             if (data.status)
-                log('Now you can start downloading sword module. <br>Here is <a href="' + data.download_link +
+                log('Now you can start downloading. <br>Here is <a href="' + data.download_link +
                     '">link to processed file</a>.');
             else
                 log("Conversion error has occurred. The maintainer will be informed, " +
@@ -61,49 +61,46 @@ function fileready(md5) {
     });
 }
 
-    $(document).ready(function () {
-        var fileinput = $('#file');
-        fileinput.change(function () {
-            var filename = fileinput[0].files[0].name;
-            if(!/\.epub/i.test(filename)) {
-                log('Not a epub file. ePub files have .epub extension.');
-                return;
-            }
-            var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
-                file = this.files[0],
-                chunkSize = 2097152,                               // read in chunks of 2MB
-                chunks = Math.ceil(file.size / chunkSize),
-                currentChunk = 0,
-                spark = new SparkMD5.ArrayBuffer(),
-                frOnload = function (e) {
-                    console.log("read chunk nr", currentChunk + 1, "of", chunks);
-                    spark.append(e.target.result);                 // append array buffer
-                    currentChunk++;
+$(document).ready(function () {
+    var fileinput = $('#file');
+    fileinput.change(function () {
+        var filename = fileinput[0].files[0].name;
+        var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+            file = this.files[0],
+            chunkSize = 2097152,                               // read in chunks of 2MB
+            chunks = Math.ceil(file.size / chunkSize),
+            currentChunk = 0,
+            spark = new SparkMD5.ArrayBuffer(),
+            frOnload = function (e) {
+                console.log("read chunk nr", currentChunk + 1, "of", chunks);
+                spark.append(e.target.result);                 // append array buffer
+                currentChunk++;
 
-                    if (currentChunk < chunks) {
-                        loadNext();
-                    }
-                    else {
-                        fileready(spark.end());
-                    }
-                },
-                frOnerror = function () {
-                    log('Oops! Something went wrong while checking MD5 sum (browser problem, try another browser?)!');
-                };
+                if (currentChunk < chunks) {
+                    loadNext();
+                }
+                else {
+                    fileready(spark.end());
+                }
+            },
+            frOnerror = function () {
+                log('Oops! Something went wrong while checking MD5 sum (browser problem, try another browser?)!');
+            };
 
-            function loadNext() {
-                var fileReader = new FileReader();
-                fileReader.onload = frOnload;
-                fileReader.onerror = frOnerror;
+        function loadNext() {
+            var fileReader = new FileReader();
+            fileReader.onload = frOnload;
+            fileReader.onerror = frOnerror;
 
-                var start = currentChunk * chunkSize,
-                    end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+            var start = currentChunk * chunkSize,
+                end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
 
-                fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
-            }
-            fileinput.attr('disabled', "1");
-            log('Checking MD5 sum, please wait...' + loader_pic);
-            loadNext();
-        });
+            fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+        }
 
+        fileinput.attr('disabled', "1");
+        log('Checking MD5 sum, please wait...' + loader_pic);
+        loadNext();
     });
+
+});
