@@ -117,5 +117,5 @@ def download(request, filename):
         data = open(os.path.join(settings.CONVERTED_FILES, '%s.dat'%md5)).read()
         del allow_download[filename]
         request.session.modified = True
-        return HttpResponse(data, content_type='application/gzip')
+        return HttpResponse(data, content_type='application/data')
     raise Http404
