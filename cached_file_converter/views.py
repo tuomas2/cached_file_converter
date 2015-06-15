@@ -14,7 +14,7 @@ from django.shortcuts import render
 from .models import Task, TASK_STATUSES
 
 def startpage(request):
-    return render(request, 'cached_file_converter/converter_page.html', {'version': '1.0'})
+    return render(request, 'cached_file_converter/converter_page.html', {'revision': settings.CONVERTER_REVISION})
 
 ##############
 # AJAX views:#
