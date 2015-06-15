@@ -29,6 +29,13 @@ and set up some settings:
         pass
     CONVERTER_FUNC = convert
 
+    # what do you want converted filename to be?
+    def get_download_filename(orig_filename):
+        return orig_filename.rsplit('.', 1)[0] + '.zip'
+
+    GET_DOWNLOAD_FILENAME = get_download_filename
+
+
 2. Include the polls URLconf in your project urls.py like this:
 
     url(r'^cached_file_converter/', include('cached_file_converter.urls')),
