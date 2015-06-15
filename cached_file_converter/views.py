@@ -3,6 +3,7 @@ import json, os
 import time
 import logging
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import transaction
 
 logger = logging.getLogger('cached_file_converter')
@@ -28,7 +29,7 @@ def is_file_cached(request):
         filename = get_download_filename(request.POST.get('filename'))
         rv = {'status': 0}
         if os.path.exists(os.path.join(settings.CONVERTED_FILES, '%s.dat'%client_md5)):
-            rv = {'status': 1,'cached': 1, 'download_link': 'download/'+filename}
+            rv = {'status': 1,'cached': 1, 'download_link': reverse('cached:download', args=(filename,))}
             request.session['md5'] = client_md5
             allow_download = request.session['allow_download'] = request.session.get('allow_download', {})
             allow_download[filename] = client_md5
@@ -95,7 +96,7 @@ def upload(request):
                     t.status = TASK_STATUSES.index('waiting')
                     t.save()
                     continue
-                rv = {'status': 1, "download_link": 'download/'+filename}
+                rv = {'status': 1, "download_link": reverse('cached:download', args=(filename,))}
                 request.session['md5'] = server_md5
                 allow_download = request.session['allow_download'] = request.session.get('allow_download', {})
                 allow_download[filename] = server_md5

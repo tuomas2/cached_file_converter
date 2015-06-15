@@ -21,7 +21,7 @@ function upload(file, token, md5) {
     formdata.append('filename', filename);
 
     $.ajax({
-        type: 'POST', url: 'upload', data: formdata, processData: false, contentType: false,
+        type: 'POST', url: UPLOAD_URL, data: formdata, processData: false, contentType: false,
         success: function (data) {
             if (data.status)
                 log('Now you can start downloading. <br>Here is <a href="' + data.download_link +
@@ -39,7 +39,7 @@ function fileready(md5) {
     var token = $('input[name=csrfmiddlewaretoken]').val();
     var fileinput = $('#file');
     var filename = fileinput[0].files[0].name;
-    $.post('is_file_cached', {csrfmiddlewaretoken: token, md5: md5, filename: filename}, function (result) {
+    $.post(IS_FILE_CACHED_URL, {csrfmiddlewaretoken: token, md5: md5, filename: filename}, function (result) {
         if (result.status) {
             if (result.cached == 1) {
                 if (result.status == 1)
