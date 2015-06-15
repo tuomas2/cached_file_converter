@@ -62,7 +62,7 @@ def is_file_cached(request):
                         elif task.status == TASK_STATUSES.index('error'):
                             rv = {'status': 0}
 
-        return HttpResponse(json.dumps(rv), content_type='application/json')
+            return HttpResponse(json.dumps(rv), content_type='application/json')
     raise Http404
 
 def upload(request):
@@ -111,7 +111,7 @@ def upload(request):
         # Let us give task processor some time to process file.
         while True:
             t = Task.objects.get(md5=server_md5)
-            if t.status == TASK_STATUSES.index('finished'):
+            if t.status == TASK_STATUSES.index('finished') and t.converter_revision >= settings.CONVERTER_REVISION:
                 if not os.path.exists(os.path.join(settings.CONVERTED_FILES, '%s.dat'%server_md5)):
                     t.status = TASK_STATUSES.index('waiting')
                     t.save()
