@@ -24,9 +24,10 @@ and set up some settings:
     CONVERTED_FILES = os.path.join(BASE_DIR, 'converted')
     # increase this if you want all your files converted again
     CONVERTER_REVISION = 0
-    # set your converter function here.
-    CONVERTER_FUNC = process_task
-
+    # set up / import your converter function here.
+    def convert(input_file, output_file, task):
+        pass
+    CONVERTER_FUNC = convert
 
 2. Include the polls URLconf in your project urls.py like this:
 
@@ -37,7 +38,7 @@ and set up some settings:
 4. Start development server
     python manage.py runserver
 
-and start task prosessor+
+and start task prosessor
 
     python manage.py process_tasks
 
