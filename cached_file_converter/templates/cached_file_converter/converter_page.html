@@ -1,13 +1,9 @@
 {% extends "cached_file_converter/base.html" %}
 
 {% block content %}
-  <h2>Give here original file to be converted</h2>
-  <p>
-  <form method="POST" enctype="multipart/form-data" onsubmit="return false;" >
-    {% csrf_token %}
-    <input id="file" type="file"/>
-  </form>
-  <h3>Conversion status and download link when file is ready for download:</h3>
-  <pre id="log"> - idle - </pre>
+<h1>Converter page</h1>
+<p>Here you can perform your favourite conversion. You may write your own template and base it on cached_file_converter/base.html
+</p>
+{{ block.super }}
 {% endblock content %}
 
