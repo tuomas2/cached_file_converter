@@ -4,12 +4,10 @@ function log(message) {
 var loader_pic = '<br><img height="42" width="42" src="' + LOADER_GIF + '">';
 function upload(file, token, md5) {
     if (file)
-        log('Uploading and converting file. Please wait! It will finish eventually, <br>' +
-            'but may take some time. Download link will appear here when it is finished. ' + loader_pic);
+        log('Uploading file. ' + loader_pic);
     else
-        log('Converting file. Cached version of file you were about to upload was found on server, but it is not yet converted. <br>' +
-            'Please wait! It will finish eventually, but may take some time. <br>' +
-            'Download link will appear here when it is finished. ' +
+        log('Converting file on the server. Download link will appear here when it is finished. ' +
+            'If you wish not to wait, you may also try again later.' +
             loader_pic);
     var formdata = new FormData();
     if (file) {
@@ -23,9 +21,13 @@ function upload(file, token, md5) {
     $.ajax({
         type: 'POST', url: UPLOAD_URL, data: formdata, processData: false, contentType: false,
         success: function (data) {
-            if (data.status)
-                log('Now you can start downloading. <br>Here is <a href="' + data.download_link +
-                    '">link to processed file</a>.');
+            if (data.status==1)
+                log('Now you can start downloading. ' +
+                    'Here is <a href="' + data.download_link + '">link to processed file</a>.');
+            else if (data.status==2) {
+                log('Upload finished');
+                return upload(false, token, md5);
+            }
             else
                 log("Conversion error has occurred. The maintainer will be informed, " +
                     "and he has now enough data to improve the conversion script for the future use.");
@@ -44,7 +46,7 @@ function fileready(md5) {
             if (result.cached == 1) {
                 if (result.status == 1)
                     log('Converted file was found cached on the server, you may start downloading immedediately. ' +
-                        '<br>Here is <a href="' + result.download_link + '">link to processed file</a>.');
+                        'Here is <a href="' + result.download_link + '">link to processed file</a>.');
                 else if (result.status == 2) {
                     upload(false, token, md5);
                 }

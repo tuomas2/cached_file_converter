@@ -85,6 +85,8 @@ def upload(request):
                 t.converter_revision = settings.CONVERTER_REVISION
                 t.status = TASK_STATUSES.index('waiting')
                 t.save()
+
+            return HttpResponse(json.dumps({'status': 2}), content_type='application/json')
         else:
             raise Exception('Original not found and file was not sent')
 
