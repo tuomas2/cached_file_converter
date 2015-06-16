@@ -8,7 +8,7 @@ function upload(file, token, md5) {
             queue_length.html(data);
         });
         if(!ready)
-            setTimeout(do_poll, 5000);
+            setTimeout(do_poll, 30000);
     }
     var formdata = new FormData();
 
