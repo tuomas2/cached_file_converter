@@ -21,7 +21,7 @@
     var LOADER_GIF = "{% static 'loader.gif' %}";
     var UPLOAD_URL = "{% url "cached:upload" %}";
     var IS_FILE_CACHED_URL = "{% url "cached:is_file_cached" %}";
-
+    var QUEUE_LENGTH_URL = "{% url "cached:queue_length" %}";
   </script>
 
 </head>
@@ -64,7 +64,7 @@
             <p>
               <form method="POST" enctype="multipart/form-data" onsubmit="return false;">
                 {% csrf_token %}
-                <input id="file" type="file"/>
+                {% block file-input %}<input id="file" type="file"/>{%endblock%}
               </form>
             </p>
           {% endblock%}
@@ -74,8 +74,8 @@
                 {% block conversion-status %}Conversion status and download link when file is ready for
                   download{% endblock %}
               </div>
-              <div id="log" class="panel-body">
-                - idle -
+              <div class="panel-body">
+                <span id="log">- idle -</span><br>
               </div>
             </div>
           {% endblock%}

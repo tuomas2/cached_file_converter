@@ -3,27 +3,45 @@ function log(message) {
 }
 var loader_pic = '<br><img height="42" width="42" src="' + LOADER_GIF + '">';
 function upload(file, token, md5) {
-    if (file)
-        log('Uploading file. ' + loader_pic);
-    else
-        log('Converting file on the server. Download link will appear here when it is finished. ' +
-            'If you wish not to wait, you may also try again later.' +
-            loader_pic);
+    function do_poll() {
+        $.post(QUEUE_LENGTH_URL, {csrfmiddlewaretoken: token, md5: md5}, function (data) {
+            queue_length.html(data);
+        });
+        if(!ready)
+            setTimeout(do_poll, 5000);
+    }
     var formdata = new FormData();
+
     if (file) {
+        log('Uploading file. ' + loader_pic);
         formdata.append('file', file);
     }
+    else {
+        log('Converting file on the server. Download link will appear here when it is finished. ' +
+            'If you wish not to wait, you may also try again later. ' +
+            'Work queue length: <span id="queue_length"> - not known - </span>.' +
+            loader_pic);
+        do_poll();
+    }
+
     var filename = $('#file')[0].files[0].name;
     formdata.append('csrfmiddlewaretoken', token);
     formdata.append('md5', md5);
     formdata.append('filename', filename);
 
+    var queue_length = $("#queue_length");
+    var ready = false;
+
+
+
     $.ajax({
         type: 'POST', url: UPLOAD_URL, data: formdata, processData: false, contentType: false,
         success: function (data) {
-            if (data.status==1)
+            if (data.status==1) {
                 log('Now you can start downloading. ' +
                     'Here is <a href="' + data.download_link + '">link to processed file</a>.');
+                ready = true;
+            }
             else if (data.status==2) {
                 log('Upload finished');
                 return upload(false, token, md5);
@@ -34,6 +52,7 @@ function upload(file, token, md5) {
             $('#file').removeAttr('disabled');
         }
     });
+
 }
 
 function fileready(md5) {

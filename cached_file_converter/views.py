@@ -31,6 +31,16 @@ def download(request, filename):
         return HttpResponse(data, content_type='application/data')
     raise Http404
 
+def queue_length(request):
+    if request.is_ajax():
+        t = Task.objects.filter(md5=request.POST.get('md5', '')).first()
+        if t:
+            count = Task.objects.filter(status=TASK_STATUSES.index('waiting'), created_at__lt=t.created_at,
+                                       converter_revision__lte=settings.CONVERTER_REVISION).count()
+
+            return HttpResponse(json.dumps(count+1), content_type='application/json')
+    raise Http404
+
 ##############
 # AJAX views:#
 ##############
