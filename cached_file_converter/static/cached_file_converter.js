@@ -7,7 +7,7 @@ function upload(file, token, md5) {
         $.post(QUEUE_LENGTH_URL, {csrfmiddlewaretoken: token, md5: md5}, function (data) {
             queue_length.html(data);
         });
-        if(!ready)
+        if(!stop_polling)
             setTimeout(do_poll, 30000);
     }
     var formdata = new FormData();
@@ -30,7 +30,7 @@ function upload(file, token, md5) {
     formdata.append('filename', filename);
 
     var queue_length = $("#queue_length");
-    var ready = false;
+    var stop_polling = false;
 
 
 
@@ -40,7 +40,7 @@ function upload(file, token, md5) {
             if (data.status==1) {
                 log('Now you can start downloading. ' +
                     'Here is <a href="' + data.download_link + '">link to processed file</a>.');
-                ready = true;
+                stop_polling = true;
             }
             else if (data.status==2) {
                 log('Upload finished');
@@ -53,6 +53,7 @@ function upload(file, token, md5) {
         },
         error: function() {
             log('Connection was lost, please try again!');
+            stop_polling = true;
         }
     });
 
