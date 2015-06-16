@@ -2,9 +2,14 @@
 Simple cached file converter service (Django 1.8 app)
 =====
 
-Checks MD5 sum of the file that is to be converted on server and uploads & performs
-conversion only if it is not already been converted. If converted file is found
-cached on the server, it can be served immediately without upload & conversion.
+1. Check MD5 sum of a file on client side to avoid waste of bandwith
+2. Is file cached on server?
+  1. Yes
+    1. If file is cached, get immediately a download link for cached converted file
+  2. No
+    1. Upload file for conversion
+    2. Convert file on server (separate task processor)
+    3. Get a link for user to download converted file
 
 Quick start
 -----------
