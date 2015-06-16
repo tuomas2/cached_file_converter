@@ -50,6 +50,9 @@ function upload(file, token, md5) {
                 log("Conversion error has occurred. The maintainer will be informed, " +
                     "and he has now enough data to improve the conversion script for the future use.");
             $('#file').removeAttr('disabled');
+        },
+        error: function() {
+            log('Connection was lost, please try again!');
         }
     });
 
@@ -79,6 +82,8 @@ function fileready(md5) {
             log("There is server-side error that occurs for this file, I'm sorry. Try again later. ");
         fileinput.removeAttr('disabled');
 
+    }).fail(function() {
+        log('Connection was lost, please try again!');
     });
 }
 
