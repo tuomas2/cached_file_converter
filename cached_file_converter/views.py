@@ -19,7 +19,6 @@ def download(request, filename):
     allow_download = request.session.get('allow_download', {})
     if filename in allow_download:
         md5 = allow_download[filename]
-        del allow_download[filename]
         request.session.modified = True
 
         try:
@@ -71,7 +70,6 @@ def is_file_cached(request):
                             rv = {'status': 2, 'cached': 1}
                         elif task.status == TASK_STATUSES.index('error'):
                             rv = {'status': 0}
-
             return HttpResponse(json.dumps(rv), content_type='application/json')
     raise Http404
 
@@ -98,7 +96,7 @@ def upload(request):
             try:
                 t = Task.objects.get(md5=server_md5)
                 if t.status == TASK_STATUSES.index('error'):
-                    logger.error('Task in error status')
+                    logger.info('Task is already in error status')
             except Task.DoesNotExist:
                 logger.error('File is already there, but no task. This is an error case!')
         elif file:
@@ -112,7 +110,6 @@ def upload(request):
                 t.converter_revision = settings.CONVERTER_REVISION
                 t.status = TASK_STATUSES.index('waiting')
                 t.save()
-
             return HttpResponse(json.dumps({'status': 2}), content_type='application/json')
         else:
             logger.critical('Original not found and file was not sent')
