@@ -2,6 +2,16 @@ function log(message) {
     $("#log").html(message);
 }
 var loader_pic = '<br><img height="42" width="42" src="' + LOADER_GIF + '">';
+
+function get_download_links(lnks){
+    var rv = 'Here are the download alternatives:<ul>';
+    for(var k in lnks) {
+        rv += '<li><a href="' + lnks[k].url + '">' + k + ' (' +  lnks[k].size + ')</a></li>';
+    }
+    rv += '</ul>';
+    return rv;
+}
+
 function upload(file, token, md5) {
     function do_poll() {
         $.post(QUEUE_LENGTH_URL, {csrfmiddlewaretoken: token, md5: md5}, function (data) {
@@ -38,8 +48,7 @@ function upload(file, token, md5) {
         type: 'POST', url: UPLOAD_URL, data: formdata, processData: false, contentType: false,
         success: function (data) {
             if (data.status==1) {
-                log('Now you can start downloading. ' +
-                    'Here is <a href="' + data.download_link + '">link to processed file</a>.');
+                log('Now you can start downloading. ' + get_download_links(data.download_links));
                 stop_polling = true;
             }
             else if (data.status==2) {
@@ -69,7 +78,7 @@ function fileready(md5) {
             if (result.cached == 1) {
                 if (result.status == 1)
                     log('Converted file was found cached on the server, you may start downloading immedediately. ' +
-                        'Here is <a href="' + result.download_link + '">link to processed file</a>.');
+                        get_download_links(result.download_links));
                 else if (result.status == 2) {
                     upload(false, token, md5);
                 }

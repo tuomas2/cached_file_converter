@@ -7,3 +7,5 @@ body {
   font-size: 120%;
 }
 p {margin: 25px 5px 20px;}
+
+ul {padding-top: 1em; padding-bottom: 0; margin-bottom: 0; }

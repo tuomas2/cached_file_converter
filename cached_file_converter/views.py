@@ -1,13 +1,16 @@
 import hashlib
-import json, os
+import json
+import os
 import time
 import logging
+
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.http import Http404, HttpResponse
+
 from django.shortcuts import render
 
+from cached_file_converter.utils import get_download_links, get_converted_filename
 from .models import Task, TASK_STATUSES
 
 logger = logging.getLogger('cached_file_converter')
@@ -15,14 +18,13 @@ logger = logging.getLogger('cached_file_converter')
 def startpage(request):
     return render(request, 'cached_file_converter/converter_page.html', {'revision': settings.CONVERTER_REVISION})
 
-def download(request, filename):
+def download(request, version_name, filename):
     allow_download = request.session.get('allow_download', {})
     if filename in allow_download:
         md5 = allow_download[filename]
         request.session.modified = True
-
         try:
-            data = open(os.path.join(settings.CONVERTED_FILES, '%s.dat' % md5)).read()
+            data = open(get_converted_filename(md5, version_name)).read()
         except Exception as e:
             logger.error('Exception in download %s', e)
             raise Http404
@@ -52,10 +54,8 @@ def is_file_cached(request):
         with transaction.atomic():
             task = Task.objects.filter(md5=client_md5).first()
             if (task and task.status == TASK_STATUSES.index('finished')
-                    and task.converter_revision >= settings.CONVERTER_REVISION
-                    and os.path.exists(os.path.join(settings.CONVERTED_FILES, '%s.dat' % client_md5))):
-
-                rv = {'status': 1, 'cached': 1, 'download_link': reverse('cached:download', args=(filename,))}
+                    and task.converter_revision >= settings.CONVERTER_REVISION):
+                rv = {'status': 1, 'cached': 1, 'download_links': get_download_links(filename, client_md5)}
                 request.session['md5'] = client_md5
                 allow_download = request.session['allow_download'] = request.session.get('allow_download', {})
                 allow_download[filename] = client_md5
@@ -70,6 +70,7 @@ def is_file_cached(request):
                             rv = {'status': 2, 'cached': 1}
                         elif task.status == TASK_STATUSES.index('error'):
                             rv = {'status': 0}
+
             return HttpResponse(json.dumps(rv), content_type='application/json')
     raise Http404
 
@@ -119,11 +120,7 @@ def upload(request):
         while True:
             t = Task.objects.get(md5=server_md5)
             if t.status == TASK_STATUSES.index('finished') and t.converter_revision >= settings.CONVERTER_REVISION:
-                if not os.path.exists(os.path.join(settings.CONVERTED_FILES, '%s.dat'%server_md5)):
-                    t.status = TASK_STATUSES.index('waiting')
-                    t.save()
-                    continue
-                rv = {'status': 1, "download_link": reverse('cached:download', args=(filename,))}
+                rv = {'status': 1, "download_links": get_download_links(filename, server_md5)}
                 request.session['md5'] = server_md5
                 allow_download = request.session['allow_download'] = request.session.get('allow_download', {})
                 allow_download[filename] = server_md5

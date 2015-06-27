@@ -30,16 +30,20 @@ and set up some settings:
     # increase this if you want all your files converted again
     CONVERTER_REVISION = 0
     # set up / import your converter function here.
-    def convert(input_file, output_file, task):
-        pass
+    def convert(input_file, output_files_and_options, task):
+        for file, options in output_files_and_options:
+            do_some_conversion(file, options)
+
     CONVERTER_FUNC = convert
 
-    # what do you want converted filename to be?
+    # Define options for differnet conversions that take place
+    CONVERTER_OPTIONS = {'Option set 1': dict(), 'Option set 2': dict(option2=True)}
+
+    # what do you want visible converted filename to be to the end user
     def get_download_filename(orig_filename):
         return orig_filename.rsplit('.', 1)[0] + '.zip'
 
     GET_DOWNLOAD_FILENAME = get_download_filename
-
 
 2. Include the polls URLconf in your project urls.py like this:
 

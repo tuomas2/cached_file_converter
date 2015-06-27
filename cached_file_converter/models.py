@@ -2,6 +2,7 @@ from django.db import models
 
 TASK_STATUSES = ['waiting', 'ongoing', 'finished', 'error']
 
+
 class Task(models.Model):
     md5 = models.CharField(max_length=32, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
