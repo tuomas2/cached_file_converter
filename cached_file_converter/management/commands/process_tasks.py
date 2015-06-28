@@ -44,7 +44,7 @@ class Command(BaseCommand):
                     task.save()
                 try:
                     logger.info('Started processing %s %s', task.orig_filename, task.md5)
-                    settings.CONVERTER_FUNC(input_file, get_output_filenanes_and_options(task.md5).values(), task)
+                    settings.CONVERTER_FUNC(input_file, get_output_filenanes_and_options(task.md5), task)
                     logger.info('Finished %s', task.md5)
                     task.converter_revision = settings.CONVERTER_REVISION
                     task.status = TASK_STATUSES.index('finished')

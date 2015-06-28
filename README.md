@@ -31,7 +31,8 @@ and set up some settings:
     CONVERTER_REVISION = 0
     # set up / import your converter function here.
     def convert(input_file, output_files_and_options, task):
-        for file, options in output_files_and_options:
+        # output_files_and_options is a dict of form {'Option set 1': filename, options}
+        for file, options in output_files_and_options.values():
             do_some_conversion(file, options)
 
     CONVERTER_FUNC = convert
