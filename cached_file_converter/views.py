@@ -19,6 +19,8 @@ def startpage(request):
     return render(request, 'cached_file_converter/converter_page.html', {'revision': settings.CONVERTER_REVISION})
 
 def download(request, version_name, filename):
+    exp_time = getattr(settings, 'DOWNLOAD_SESSION_EXPIRY', 1800)
+    request.session.set_expiry(exp_time)
     allow_download = request.session.get('allow_download', {})
     if filename in allow_download:
         md5 = allow_download[filename]
