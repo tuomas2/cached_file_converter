@@ -26,7 +26,7 @@ def download(request, version_name, filename):
         md5 = allow_download[filename]
         request.session.modified = True
         try:
-            data = open(get_converted_filename(md5, version_name)).read()
+            data = open(get_converted_filename(md5, version_name), 'rb').read()
         except Exception as e:
             logger.error('Exception in download %s', e)
             raise Http404

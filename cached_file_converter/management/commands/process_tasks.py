@@ -19,7 +19,7 @@ class Command(BaseCommand):
     help = "Poll continuously for file conversion tasks and process them"
 
     def cleanup(self, output_files):
-         for output_file in output_files.values():
+         for output_file in list(output_files.values()):
             if os.path.exists(output_file):
                 os.remove(output_file)
 
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                         Q(status=TASK_STATUSES.index('waiting'))).order_by('status', 'created_at').first()
                     if not task:
                         continue
-                    print 'but now:', task
+                    print('but now:', task)
                     input_file = os.path.join(settings.ORIGINAL_FILES, '%s.dat'%task.md5)
                     output_files = get_output_filenames(task.md5)
 
@@ -58,10 +58,10 @@ class Command(BaseCommand):
                     self.cleanup(output_files)
                     task.status = TASK_STATUSES.index('error')
                     logger.error('Error while processing %s: %s',task.md5, e)
-                print 'task now: ', task
+                print('task now: ', task)
                 task.save()
                 t = Task.objects.get(pk=task.pk)
-                print 'and now: ', t
+                print('and now: ', t)
 
         except KeyboardInterrupt:
             logger.info('Exiting gracefully. Bye!')
