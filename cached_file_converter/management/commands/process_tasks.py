@@ -19,7 +19,7 @@ class Command(BaseCommand):
     help = "Poll continuously for file conversion tasks and process them"
 
     def cleanup(self, output_files):
-         for output_file in list(output_files.values()):
+         for output_file in output_files.values():
             if os.path.exists(output_file):
                 os.remove(output_file)
 
