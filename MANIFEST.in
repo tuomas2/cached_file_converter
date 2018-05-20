@@ -1,0 +1,6 @@
+recursive-include cached_file_converter *.py
+recursive-include cached_file_converter *.gif
+recursive-include cached_file_converter *.html
+recursive-include cached_file_converter *.js
+recursive-include cached_file_converter *.css
+include MANIFEST.in
