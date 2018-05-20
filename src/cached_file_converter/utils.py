@@ -6,14 +6,15 @@
 import math
 import os
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
+
 
 def get_output_filenanes_and_options(md5):
     return {name: (os.path.join(settings.CONVERTED_FILES, '%s_%s.dat'%(md5, name.lower().replace(' ', '_'))), options)
-           for name, options in settings.CONVERTER_OPTIONS.iteritems()}
+           for name, options in settings.CONVERTER_OPTIONS.items()}
 
 def get_output_filenames(md5):
-    return {k:v[0] for k, v in get_output_filenanes_and_options(md5).iteritems()}
+    return {k:v[0] for k, v in get_output_filenanes_and_options(md5).items()}
 
 
 def get_download_links(filename, md5):
@@ -30,7 +31,7 @@ def get_download_links(filename, md5):
 
     return {name: {'url': reverse('cached:download', args=(name.replace(' ', '_').lower(), filename)),
                    'size': convert_size(os.path.getsize(get_converted_filename(md5, name)))}
-            for name in settings.CONVERTER_OPTIONS.keys()
+            for name in list(settings.CONVERTER_OPTIONS.keys())
             }
 
 

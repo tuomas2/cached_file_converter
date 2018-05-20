@@ -1,0 +1,3 @@
+include MANIFEST.in
+recursive-include src/cached_file_converter/static *
+recursive-include src/cached_file_converter/templates *.html

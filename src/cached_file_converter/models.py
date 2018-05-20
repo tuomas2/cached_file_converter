@@ -10,5 +10,5 @@ class Task(models.Model):
     orig_filename = models.CharField(max_length=64, default='no_filename')
     converter_revision = models.IntegerField(default=0) # if software has been updated, file needs to be converted again
 
-    def __unicode__(self):
+    def __str__(self):
         return '<Task %s %s %s>'%(self.md5, self.orig_filename, TASK_STATUSES[self.status])

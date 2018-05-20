@@ -1,5 +1,5 @@
 =====
-Simple cached file converter service (Django 1.8 app)
+Simple cached file converter service (Django 2.0 app)
 =====
 
 1. Check MD5 sum of a file on client side to avoid waste of bandwith
