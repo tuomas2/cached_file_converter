@@ -6,7 +6,8 @@
 import math
 import os
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
+
 
 def get_output_filenanes_and_options(md5):
     return {name: (os.path.join(settings.CONVERTED_FILES, '%s_%s.dat'%(md5, name.lower().replace(' ', '_'))), options)

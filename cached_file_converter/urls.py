@@ -15,4 +15,4 @@ _urlpatterns = [
     url(r'^$', views.startpage, name='index'),
 ]
 
-urlpatterns = [ url(r'', include(_urlpatterns, namespace='cached', app_name='cached_file_converter'))]
+urlpatterns = [ url(r'', include((_urlpatterns, 'cached_file_converter'), namespace='cached'))]
